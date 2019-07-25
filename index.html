@@ -1,41 +1,184 @@
----
-layout: page
-description: "博客页面"
----
+<!DOCTYPE html>
+<html>
 
-{% for post in paginator.posts %}
-<div class="post-preview">
-    <a href="{{ post.url | prepend: site.baseurl }}">
-        <h2 class="post-title">            
-            {{ post.title }}
-        </h2>
-        {% if post.subtitle %}
-        <h3 class="post-subtitle">
-            {{ post.subtitle }}
-        </h3>
-        {% endif %}
-        <div class="post-content-preview">
-            {{ post.content | strip_html | truncate:150 }}
-        </div>
-    </a>
-    <p class="post-meta">Posted by {% if post.author %}{{ post.author }}{% else %}{{ site.title }}{% endif %} on {{ post.date | date: "%B %-d, %Y" }}</p>
-</div>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,mininum-scale=1.0,maxinum-scale=1.0,user-scalable=no">
+	<title>中国能效标识</title>
+	<link rel="stylesheet" href="https://www.pzjdimg.com/bbqk/css/global750.css" />
+	<link rel="stylesheet" href="https://www.pzjdimg.com/bbqk/css/style.css" />
+	<script>
+		var _hmt = _hmt || [];
+		(function () {
+			var hm = document.createElement("script");
+			hm.src = "https://hm.baidu.com/hm.js?fe150a3dd6aa0cff09fb41233fbd26b0";
+			var s = document.getElementsByTagName("script")[0];
+			s.parentNode.insertBefore(hm, s);
+		})();
+	</script>
+	<style>
 
-<hr>
-{% endfor %}
+	</style>
+</head>
 
-<!-- Pager -->
-{% if paginator.total_pages > 1 %}
-<ul class="pager">
-    {% if paginator.previous_page %}
-    <li class="previous">
-        <a href="{{ paginator.previous_page_path | prepend: site.baseurl | replace: '//', '/' }}">&larr; Newer Posts</a>
-    </li>
-    {% endif %}
-    {% if paginator.next_page %}
-    <li class="next">
-        <a href="{{ paginator.next_page_path | prepend: site.baseurl | replace: '//', '/' }}">Older Posts &rarr;</a>
-    </li>
-    {% endif %}
-</ul>
-{% endif %}
+<body>
+	<div id="index" class="wrapper" style="padding-bottom: 0.36rem;">
+		<section class="flex-around recodeWrap">
+			<article class="info">
+				<p>规格型号：<span class="recordType">CXW-238</span></p>
+				<p>备案号：<span class="recordNum">2016-39-8570-11315643</span></p>
+				<p>公告时间：<span class="recordDate">2016-02-26</span></p>
+				<p>生产者名称：<span class="proName">山东小鸭集团小家电有限公司</span></p>
+				<p style="display: none" class="extend">扩展型号<i class="iconRit"></i></p>
+			</article>
+			<article class="levelImgWrap">
+				<img src="https://www.pzjdimg.com/bbqk/img/level4.png" />
+			</article>
+		</section>
+		<section class="">
+			<article class="slider">
+				<div id="mpSlider">
+					<div class="slideItem">
+						<div id="first" style="font-size: .28rem;padding: .6rem .4rem 0">
+							<div style="line-height:.6rem"><span>关机功率</span><span style="float:right">1.5(W)</span></div>
+							<div style="line-height:.6rem"><span>常态气味降低度</span><span style="float:right">90(%)</span></div>
+							<div style="line-height:.6rem"><span>油脂分离度</span><span style="float:right">90(%)</span></div>
+							<div style="line-height:.6rem"><span>全压效率</span><span style="float:right">18(%)</span></div>
+						</div>
+					</div>
+				</div>
+			</article>
+
+		</section>
+	</div>
+	<div id="mask"></div>
+	<script src="https://www.pzjdimg.com/public/js/jquery-2.1.1.min.js"></script>
+	<script src="https://www.pzjdimg.com/public/js/jquery.cookie.js"></script>
+	<script src="https://www.pzjdimg.com/public/js/jquery.bxslider.min.js"></script>
+	<script src="https://www.pzjdimg.com/bbqk/js/clipboard.min.js"></script>
+	<script src="https://www.pzjdimg.com/bbqk/js/util.js"></script>
+	<script>
+		var idxe = getCookie('e');
+		var redirectUrl = "http://elm.bbqk.com/redirect.html"
+		$(function () {
+			let userUrl = "http://a.aiyouyu.net/yyug/token";
+			let idxe = getCookie('e');
+			if (getCookie('e')) {
+				getToken(uid, getCookie('e'));
+			} else {
+				$.get(userUrl, function (data) {
+					createCookie('e', data.e, '', '.bbqk.com');
+					getToken(uid, data.e);
+					idxe = data.e
+				})
+			}
+			getProInfo();
+			getRecordParam();
+			getIns();
+			getTongJia();
+			$("#product").attr("href", 'http://wx.aiyouyu.net/branchPage/product.html?a=' + uid);
+			new ClipboardJS('#copyCodeBtn');
+			$("#copyCodeBtn").click(function () {
+				var code = $(this).data("clipboard-text")
+				if (!code) {
+					return;
+				}
+				$(".dialogBlock,#mask").hide();
+				$(".successMsg").show();
+				var timer
+				new Promise(function (resolve, reject) {
+					timer = setTimeout(function () {
+						$(".successMsg").hide();
+						resolve(true);
+					}, 500);
+				}).then(function () {
+					clearTimeout(timer);
+					$("#mask").show();
+					$(".codeBlock").addClass("ANI");
+				});
+			});
+			$(".codeClose").click(() => {
+				$("#mask").hide();
+				$(".codeBlock").removeClass('ANI')
+			})
+			$(".extendClose").click(() => {
+				$("#mask").hide();
+				$(".extendBlock").hide()
+			})
+			// $("#mpSlider").bxSlider({
+			//   controls:false,
+			//   auto:true
+			// });
+			$(".extend").click(() => {
+				var html = '';
+				var kuoUrl = "http://zip.el.bbqkimg.cn/t30/" + uid.substr(3) + "/" + uid + ".js";
+				$(".extendList").empty();
+				$("#mask").show();
+				$(".extendBlock").show();
+				$.getScript(kuoUrl, function () {
+					titleIn30KuoValueStr.forEach(function (item, idx) {
+						html += '<li>' + item + '</li>'
+					});
+					$(".extendList").append(html);
+				})
+			})
+		})
+		function getIns() {
+			var insUrl = "http://services.pzjiadian.com/manual/js/" + uid + ".js";
+			$.getScript(insUrl, function () {
+				if (typeof manualInfo == "object") {
+					if (manualInfo.img) {
+						$("#insWrap").css("display", "flex");
+						$("#ins").attr("href", redirectUrl + "?url=" + encodeURIComponent("http://services.pzjiadian.com/instruction/instruction.html?uid=" + uid));
+					}
+				}
+			});
+		}
+		function getTongJia() {
+			var copperUrl = "http://m1.bbqkimg.cn/tongjia/" + uid + ".js"
+			$.getScript(copperUrl, function () {
+				if (typeof tongjia == "object" && JSON.stringify(tongjia) != '{}') {
+					$("#tjWrap").css("display", "block")
+					$("#tongjia").attr("href", redirectUrl + "?url=" + encodeURIComponent("http://p.bbqk.com/tongjia/" + uid + "/index.html?uid=" + uid));
+				}
+			});
+		};
+		function getProInfo() {
+			var proInfoJs = "http://p.bbqk.com/" + uid + "/js/productInfo.js";
+			return new Promise(function (resolve, reject) {
+				$.getScript(proInfoJs, function () {
+					$(".level").html(productInfo.energyGrade == 0 ? '_' : productInfo.energyGrade + "级能效");
+					$(".levelImgWrap img").attr("src", "https://www.pzjdimg.com/bbqk/img/level" + productInfo.energyGrade + ".png").show();
+					$(".recordNum").html(productInfo.recordNum);
+					$(".recordType").html(productInfo.productModel)
+					$(".recordDate").html(productInfo.recordDate);
+					$(".proName").html(productInfo.eName);
+					if (productInfo.productType == "T30" && productInfo.checkFlag == 2) {
+						$(".extend").show();
+					}
+					resolve(productInfo);
+					sendLog('http://com-bbqk-el.cn-beijing.log.aliyuncs.com/logstores/log_pv/track_ua.gif', uid, productInfo.productModel, productInfo.productType, productInfo.eid, idxe);
+				})
+			})
+		}
+		function getToken(uid, userid) {
+			let tokenUrl = 'http://a.aiyouyu.net/yycg/token'
+			$.ajax(tokenUrl + '?a=' + uid + '&e=' + userid).done(function (data) {
+				getProInfo().then(function (param) {
+					let token = `【型号:${param.productModel}】【厂家:${param.eName}】${data.m}-请关注“有鱼会买”公众号，发送此内容获取专属服务！`
+					$("#copyCodeBtn").show().attr("data-clipboard-text", token);
+				})
+
+			}).fail(function (err) {
+				$("#copyCodeBtn").hide()
+			})
+			/*$.get(,function(data){
+				
+				
+			})*/
+		}
+
+	</script>
+</body>
+
+</html>
